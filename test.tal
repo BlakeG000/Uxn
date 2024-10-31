@@ -1,0 +1,64 @@
+( hello-pong.tal )
+
+( devices )
+|00 @System  [ &vector $2 &pad  $6  &r $2  &g $2  &b $2 ]
+|20 @Screen  [ &vector $2 &width $2 &height $2 &auto $1 &pad $1
+               &x $2 &y  $2 &addr $2 &pixel $1 &sprite $1 ]
+|80 @Controller [ &vector $2 &button $1 &key $1 ]
+
+( macros )
+%HALF2 { #01 SFT2 } ( short -- short/2 )
+%DOUBLE2 { #10 SFT2 }
+
+( constants )
+%PADDLE-WIDTH { #0010 } ( 2 tiles )
+%PADDLE-HEIGHT { #0018 } ( 3 tiles )
+%PADDLE-COLOR { #c5 }
+%PADDLE-SPEED { #0001 }
+%BALL-SIZE { #0010 } ( 2 tiles )
+%BALL-COLOR { #c5 }
+%BALL-POSITIVE-SPEED { #0001 }
+%BALL-NEGATIVE-SPEED { #ffff }
+%CLEAR-COLOR { #40 }
+%MARGIN { #0010 } ( left and right )
+%WALL-MARGIN { #0010 } ( top and bottom )
+
+( zero page )
+|0000
+    @left [ &x $2 &y $2 ]
+    @right [ &x $2 &y $2 ]
+    @ball [ &x $2 &y $2 &speed-x $2 &speed-y $2 ]
+
+( setup )
+|0100
+@setup ( -> )
+    ( set system colors )
+    #2ce9 .System/r DEO2
+    #01c0 .System/g DEO2
+    #2ce5 .System/b DEO2
+
+    ( set screen vector )
+    ;on-frame .Screen/vector DEO2
+
+    ( draw background )
+    ;draw-background JSR2
+
+    ( initialize paddles )
+    MARGIN .left/x STZ2
+    .Screen/width DEI2
+    MARGIN SUB2 PADDLE-WIDTH SUB2
+    .right/x STZ2
+
+    .Screen/height DEI2 PADDLE-HEIGHT SUB2
+    HALF2 DUP2
+    .left/y STZ2
+    .right/y STZ2
+
+    ( initialize ball )
+    ;reset JSR2
+
+    ( initialize ball speed )
+    BALL-NEGATIVE-SPEED .ball/speed-x STZ2
+    BALL-POSITIVE-SPEED .ball/speed-y STZ2
+
+BRK
