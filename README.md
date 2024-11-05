@@ -1,11 +1,3 @@
-#My title
-2-3 sentences describing what your demo does.
-Commit+sync
-
-
-
-__________
-| A  ->  |
-| |    | |
-|  <-  v |
-----------
+# Pacman
+Classic snake game with a twist, offscreen mode.
+New feature, insta death
